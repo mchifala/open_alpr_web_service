@@ -1,4 +1,8 @@
 #!/bin/sh
-#
-# This is the script you need to provide to launch a redis instance
-#
+
+#gcloud container clusters get-credentials lab8
+
+docker build -t rest:0.1 .
+docker tag rest:0.1 gcr.io/csci5253/rest:0.1
+gcloud auth configure-docker
+docker push gcr.io/csci5253/rest:0.1

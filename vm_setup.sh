@@ -4,3 +4,5 @@ curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyr
 sudo apt-get update && sudo apt-get install google-cloud-sdk
 sudo apt-get install kubectl
 gcloud init
+sudo usermod -a -G docker $USER
+gcloud auth configure-docker -y

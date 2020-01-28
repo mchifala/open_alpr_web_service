@@ -10,7 +10,7 @@ import redis
 def send_to_worker_queue(message):
     """
     This function takes a message and sends it to a RabbitMQ worker queue
-    "task_queue" hosted on the "rabbitmq" VM using "toWorker" exchange.
+    "task_queue" hosted in the "rabbitmq" pod using "toWorker" exchange.
 
     Parameters:
     - message(jsonpickle object): A dictionary {"hash": hash, "image": image_bytes}
@@ -36,7 +36,7 @@ def send_to_worker_queue(message):
 def send_to_logs(message):
     """
     This function takes a log message and sends it to a RabbitMQ "rest.debug" topic
-    hosted on the "rabbitmq" VM using "logs" exchange.
+    hosted on the "rabbitmq" pod using "logs" exchange.
 
     Parameters:
     - message(str): A string containing information such as file name,
@@ -174,4 +174,3 @@ def get_license_plates(license):
         return response
 
 app.run(host="0.0.0.0", port=5000)
-

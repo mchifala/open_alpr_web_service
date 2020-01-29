@@ -8,7 +8,7 @@ These instructions will get you a Flask REST API up and running on your Google K
 
 ### Prerequisites
 
-The following packages/tools are necessary to successfully execute the rabbitmq-launch.sh script
+The following packages/tools are necessary to successfully execute the rest-launch.sh script
 
 - docker
 - kubectl

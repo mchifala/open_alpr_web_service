@@ -38,6 +38,24 @@ Once credentials have been obtained, execute the following command from the clon
 bash redis-launch.sh
 ```
 
+### Redis databases
+
+There will  be 3 Redis databases. Redis uses numbers for database name and this project will use 1, 2 & 3. The '0' database is the default. The three different key-value stores have the following composition.
+
+**Database 1:**
+- Key = MD5 hash of image
+- Value = Value(s) of the licenses and latitude/longitude found in the image The values can
+
+**Database 2:**
+- Key = File name of image
+- Value = Values of the MD5's of photos with that file name
+- Note that an image may be submitted under multiple names and images with the same name may have different MD5's.
+
+**Database 3:**  
+- Key = License plate number   
+- Value = MD5 hashes for images in which which the license plate was detected
+
+
 ### Notes
 The container and resulting service name are named `redis` so that worker nodes can use DNS names to locate the instance.
 

@@ -1,3 +1,64 @@
+# ALPR workers
+
+The worker-launch.sh script creates and deploys a user-specified number of containers that process the images using the ALPR software.
+
+## Getting started
+
+These instructions will get you ALPR workers up and running on your Google Kubernetes Engine cluster.
+
+### Prerequisites
+
+The following packages/tools are necessary to successfully execute the worker-launch.sh script
+
+- docker
+- kubectl
+- gcloud
+
+**Installing packages and configuring master VM:**
+For convenience, a vm_setup.sh script is provided in the main directory of this project. This script can be used to install docker, gcloud, and kubectl command line tools onto a Google Compute Engine virtual machine (VM). This master VM can then be used to easily communicate with the Google Kubernetes Engine cluster.
+
+First, create a new VM (Ubuntu 18.04 preferred) in Google Compute Engine. SSH into the VM, clone the Github repository, and execute the following command.
+
+```
+bash vm_setup.sh
+```
+
+**Google Kubernetes Engine credentials:**
+The following command must be run to get the Google Kubernetes Engine credentials for a particular cluster. It must be run prior to executing any of the launch shell scripts.
+
+```
+gcloud container clusters get-credentials [cluster_name]
+```
+
+### Execution
+
+**Launching ALPR workers:**
+
+Once credentials have been obtained, execute the following command from the cloned Github repository on the master VM.
+
+```
+bash worker-launch.sh
+```
+
+
+### Notes
+The container and resulting service name are named `rest` so that worker nodes can use DNS names to locate the instance.
+
+This container is the only container in the Kubernetes cluster that will have an external endpoint.
+
+
+## Authors
+
+**Michael W. Chifala** - University of Colorado, Boulder, CSCI 5253: Data Center Scale Computing
+
+## Acknowledgments
+
+* Dirk Grunwald, University of Colorado, Boulder
+* Github: PurpleBooth/README-Template.md
+* Flask: http://flask.palletsprojects.com/en/1.1.x/
+
+
+
 # ALPR Worker
 
 The steps you need to take:
@@ -16,15 +77,6 @@ You can install your Python program by providing it via the `--metadata-from-fil
 
 Once you have your worker configured, [create an image using the gcloud command line or a program](https://cloud.google.com/sdk/gcloud/reference/compute/images/create). You'll use that to spin up other workers.
 
-File `worker-install.sh` should contain the configuration and code you choose to use in building your worker (probably copied from `build-worker-u19.10.sh` or `build-worker-src.sh`). File `worker-launch.sh` should launch an instance that you can then shutdown and use to create an image. File `worker-addworker.sh` should start up a new worker using the image you constructed.
-
-## Program to process images
-
-You will need two RabbitMQ exchanges.
-+ A `topic` exchange called `logs` used for debugging and logging output
-+ A `direct` exchange called `toWorker` used by the REST API to send images to the worker
-
-You can use whatever method you like to get data from the REST API to the worker. For example, you could create a Python datatype including the image, then `pickle` the image and send it via RabbitMQ. Or, you could store the image in Google object storage and send a smaller message.
 
 Upon receiving the message, you should first determine if the image contains geotagged information. The sample program `provided-GetLatLon.py` shows you how to extract the latitude and longitude from a photo. See the description of the images to test your code.  Other image formats, such as `png` don't support the extended headers we're looking for; however, your solution should be robust to being handed bad image files.
 
@@ -32,31 +84,6 @@ If the image is geotagged, you should then look for a license plate. You can use
 
 Following this, if the image is both geotagged and has a license plate, you will update the Redis database with the results. Redis is a Key-Value store that has simple Get/Put methods and also has an internal "list" datatype. You can read more about [the Python interface](https://pypi.org/project/redis/). Redis supports a number of datatypes including lists and sets. In many cases, the set data type will be the most appropriate because we only want a single instance of a data item associated with a key.
 
-We will be using 3 Redis databases. Redis uses numbers for database names, and we'll be using 1, 2 & 3. The '0' database is the default. The three different key-value stores have the following composition.
-```
-##
-## This database has key "md5" (of a photo) and value(s)
-## of the licenses and lat/lon found in the photo. The values can
-## be stored as a string -- you can assume that ':' doesn't appear
-## in license plates e.g. "license:confidence:lat:lon" is a possible encoding.
-## If multiple licenses are found (e.g. with difference confidence) you should
-## add all of them to the database.
-## 
-redisByChecksum = redis.Redis(host=redisHost, db=1)
-## 
-## This database has key "filename" (of a photo) and
-## values the MD5's of photos submitted with that name.
-## Note that an image may be submitted under multiple names
-## and images with the same name may have different MD5's.
-##                                                                              
-redisByName = redis.Redis(host=redisHost, db=2)
-##                                                                              
-## This database has key "license" and value(s)
-## the md5 hashes in which the license is stored.
-##                                                                              
-redisMD5ByLicense = redis.Redis(host=redisHost, db=3)
-```
-Redis also supports [limited geo-spatial indexes](https://www.infoworld.com/article/3128306/build-geospatial-apps-with-redis.html) but you don't need to use those unless you want to extend the homework.
 
 Once the database has been updated or when you determine there is no geotagged information and/or you can't get a license plate, you should then `acknowledge` the RabbitMQ message. You should only acknowledge it after you've processed it.
 
@@ -71,8 +98,4 @@ sudo pip3 install --upgrade pika
 
 You should create a shell script `worker-addworker.sh` (using the `gcloud` commands) or a python program to launch a new worker. That script must also start the worker script in the image. Make sure that your instance does not have an external IP address using the `--network-interface=no-address` flag if using the `gcloud` command interface or similar method if using Python.
 
-You should verify (using the rabbitmq `topic` queue) that you can process images correctly and enter them in the database.
-
-You should then verify that you can launch a new worker and it too will process images. Lastly, you should verify that if you destroy a worker, the remaining workers can process the images.
-
-You will have to demonstrate all of these steps in your grading interview.
+Y

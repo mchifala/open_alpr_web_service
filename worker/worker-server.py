@@ -11,7 +11,10 @@ import redis
 import socket
 
 def get_exif_data(image):
-    """Returns a dictionary from the exif data of an PIL Image item. Also converts the GPS Tags"""
+    """
+    Returns a dictionary from the exif data of an PIL Image item. Also converts the GPS Tags
+    Credit: https://github.com/openalpr/openalpr
+    """
     exif_data = {}
     info = image._getexif()
     if info:
@@ -30,7 +33,10 @@ def get_exif_data(image):
     return exif_data
 
 def _convert_to_degress(value):
-    """Helper function to convert the GPS coordinates stored in the EXIF to degress in float format"""
+    """
+    Helper function to convert the GPS coordinates stored in the EXIF to degress in float format
+    Credit: https://github.com/openalpr/openalpr
+    """
     deg_num, deg_denom = value[0]
     d = float(deg_num) / float(deg_denom)
 
@@ -43,7 +49,10 @@ def _convert_to_degress(value):
     return d + (m / 60.0) + (s / 3600.0)
 
 def get_lat_lon(exif_data, debug=False):
-    """Returns the latitude and longitude, if available, from the provided exif_data (obtained through get_exif_data above)"""
+    """
+    Returns the latitude and longitude, if available, from the provided exif_data (obtained through get_exif_data above)
+    Credit: https://github.com/openalpr/openalpr
+    """
     lat = None
     lon = None
 
@@ -81,6 +90,9 @@ def getLatLon(image_bytes, debug=False):
         return None
 
 def get_license_plates(image_array):
+    """
+    This function takes an image array,
+    """
     alpr = Alpr('us', '/etc/openalpr/openalpr.conf', '/usr/share/openalpr/runtime_data')
     results = alpr.recognize_array(image_array)
     redis_dict = {}
@@ -184,14 +196,14 @@ def callback(ch, method, properties, body):
         send_to_logs("Image Processed (Hash): " +data["hash"]+ ", Status: failure, Error: "+inst+ ", Worker: " + socket.gethostname())
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
-connection = pika.BlockingConnection(
-    pika.ConnectionParameters(host='rabbitmq'))
-channel = connection.channel()
-channel.queue_declare(queue='task_queue', durable=True)
+if __name__ == "__main__":
+    connection = pika.BlockingConnection(
+        pika.ConnectionParameters(host='rabbitmq'))
+    channel = connection.channel()
+    channel.queue_declare(queue='task_queue', durable=True)
 
-#print(' [*] Waiting for messages. To exit press CTRL+C')
+    #print(' [*] Waiting for messages. To exit press CTRL+C')
 
-channel.basic_qos(prefetch_count=1)
-channel.basic_consume(queue='task_queue', on_message_callback=callback)
-channel.start_consuming()
-
+    channel.basic_qos(prefetch_count=1)
+    channel.basic_consume(queue='task_queue', on_message_callback=callback)
+    channel.start_consuming()

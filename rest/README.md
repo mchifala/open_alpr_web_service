@@ -24,8 +24,7 @@ bash vm_setup.sh
 ```
 
 **Google Kubernetes Engine credentials:**
-The following command must be run to get the Google Kubernetes Engine credentials for a particular cluster. It must be run prior to executing any of
-the launch shell scripts.
+The following command must be run to get the Google Kubernetes Engine credentials for a particular cluster. It must be run prior to executing any of the launch shell scripts.
 
 ```
 gcloud container clusters get-credentials [cluster_name]

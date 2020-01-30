@@ -31,7 +31,7 @@ The following command must be run to get the Google Kubernetes Engine credential
 gcloud container clusters get-credentials [cluster_name]
 ```
 
-###Launching RabbitMQ service
+### Launching RabbitMQ service
 
 Once credentials have been obtained, execute the following command from the cloned Github repository on the master VM.
 

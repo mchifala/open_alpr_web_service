@@ -1,6 +1,7 @@
 # Redis database
 
-The redis-launch.sh script creates and deploys a container that provides a Redis databasse.
+## Overview
+The `redis-launch.sh` script creates and deploys a container that provides a Redis database. The web service uses three databases as described below to store information about the processed images.
 
 ## Getting started
 
@@ -15,7 +16,7 @@ The following packages/tools are necessary to successfully execute the redis-lau
 - gcloud
 
 **Installing packages and configuring master VM:**
-For convenience, a vm_setup.sh script is provided in the main directory of this project. This script can be used to install docker, gcloud, and kubectl command line tools onto a Google Compute Engine virtual machine (VM). This master VM can then be used to easily communicate with the Google Kubernetes Engine cluster.
+For convenience, a `vm_setup.sh` script is provided in the main directory of this project. This script can be used to install docker, gcloud, and kubectl command line tools onto a Google Compute Engine virtual machine (VM). This master VM can then be used to easily communicate with the Google Kubernetes Engine cluster.
 
 First, create a new VM (Ubuntu 18.04 preferred) in Google Compute Engine. SSH into the VM, clone the Github repository, and execute the following command.
 
@@ -30,7 +31,7 @@ The following command must be run to get the Google Kubernetes Engine credential
 gcloud container clusters get-credentials [cluster_name]
 ```
 
-**Launching RabbitMQ service:**
+### Launching Redis service
 
 Once credentials have been obtained, execute the following command from the cloned Github repository on the master VM.
 
@@ -40,7 +41,7 @@ bash redis-launch.sh
 
 ### Redis databases
 
-There will  be 3 Redis databases. Redis uses numbers for database name and this project will use 1, 2 & 3. The '0' database is the default. The three different key-value stores have the following composition.
+There will be 3 Redis databases. Redis uses numbers for database name and this project will use 1, 2 & 3. The '0' database is the default. The three different key-value stores have the following composition.
 
 **Database 1:**
 - Key = MD5 hash of image

@@ -9,7 +9,7 @@ These instructions will get you a Redis database up and running on your Google K
 
 ### Prerequisites
 
-The following packages/tools are necessary to successfully execute the redis-launch.sh script
+The following packages/tools are necessary to successfully execute the `redis-launch.sh` script
 
 - docker
 - kubectl
@@ -50,7 +50,7 @@ There will be 3 Redis databases. Redis uses numbers for database name and this p
 **Database 2:**
 - Key = File name of image
 - Value = Values of the MD5's of photos with that file name
-- Note that an image may be submitted under multiple names and images with the same name may have different MD5's.
+- Note: an image may be submitted under multiple names and images with the same name may have different MD5's.
 
 **Database 3:**  
 - Key = License plate number   
@@ -62,7 +62,7 @@ The container and resulting service name are named `redis` so that worker nodes 
 
 You don't need to create any database tables in advance -- that happens automatically when you start using the database
 
-If you restart, delete, or redeploy your redis container, the database will also be deleted because we didn't provide a volume for the data.
+If you restart, delete, or redeploy your redis container, the database will also be deleted because we do not provide a volume for the data.
 
 ## Authors
 

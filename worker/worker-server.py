@@ -79,6 +79,9 @@ def get_lat_lon(exif_data, debug=False):
     return lat, lon
 
 def getLatLon(image_bytes, debug=False):
+    """
+    Credit: https://github.com/openalpr/openalpr
+    """
     try:
         ioBuffer = io.BytesIO(image_bytes)
         image = Image.open(ioBuffer)
@@ -91,7 +94,7 @@ def getLatLon(image_bytes, debug=False):
 
 def get_license_plates(image_array):
     """
-    This function takes an image array,
+    This function takes an image array and uses the APLR software to scan for license plates
     """
     alpr = Alpr('us', '/etc/openalpr/openalpr.conf', '/usr/share/openalpr/runtime_data')
     results = alpr.recognize_array(image_array)
